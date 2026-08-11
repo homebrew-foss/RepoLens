@@ -1655,7 +1655,7 @@ function renderSettings() {
   aiSection.appendChild(makeSettingsRow('Vector Database', 'Qdrant (embedded local)',
     el('span', { class: 'text-sm font-mono' }, state.config?.vector_db || 'Qdrant (embedded local)'),
   ));
-
+  
   aiSection.appendChild(makeSettingsRow('API Key', state.config?.api_key_set ? 'Configured' : 'Not set',
     el('div', { class: 'flex-center gap-2' },
       el('span', { class: state.config?.api_key_set ? 'badge badge-success' : 'badge badge-error' }, state.config?.api_key_set ? `${state.config.api_key_preview}` : 'Missing'),
