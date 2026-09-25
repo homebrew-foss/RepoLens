@@ -12,8 +12,8 @@ Beyond structural visibility, the integration of a query engine backed by exact 
 - *Optional*: CUDA supported GPU(Would be useful for generation of embeddings locally)
 ### Running this project locally
 - Clone the Repo
-- Run uv sync
-- Run uvicorn main:app --host 0.0.0.0 --port 5000
+- Run `uv sync`
+- Run `uvicorn main:app --host 0.0.0.0 --port 5000`
 ## Working of RepoLens
 `RepoLens` is built as a pipeline that turns a raw GitHub repository into a navigable, explainable knowledge graph of the codebase. Here's a breakdown of how each stage works.
 ### 1. Cloning of the repository
