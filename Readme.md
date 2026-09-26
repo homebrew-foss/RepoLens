@@ -13,6 +13,7 @@ Beyond structural visibility, the integration of a query engine backed by exact 
 ### Running this project locally
 - Clone the Repo
 - Run `uv sync`
+- Activate the virtual environment(os specific)
 - Run `uvicorn main:app --host 0.0.0.0 --port 5000`
 ## Working of RepoLens
 `RepoLens` is built as a pipeline that turns a raw GitHub repository into a navigable, explainable knowledge graph of the codebase. Here's a breakdown of how each stage works.
