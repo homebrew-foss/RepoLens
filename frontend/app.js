@@ -1185,13 +1185,12 @@ function renderExplorer() {
     explorer.appendChild(renderEmptyState(Icons.folder, 'No summaries available', 'Parse a repository first to view its summaries.', 'Add Repository', () => openAddRepoModal()));
     return explorer;
   }
-
   // Actions
   const actionsBar = el('div', { class: 'flex-between mb-4' });
   actionsBar.appendChild(el('span', { class: 'text-sm text-secondary' }, `${countFiles(state.structure)} files · ${countSummaries(state.structure).nodes} nodes`));
   const btns = el('div', { class: 'flex-center gap-2' });
   btns.appendChild(el('button', { class: 'btn btn-ghost', onClick: () => { state.expandedNodes.clear(); renderTreeInto(treeContainer, state.structure); } }, 'Collapse All'));
-  btns.appendChild(el('button', { class: 'btn btn-ghost', onClick: () => expandAll(state.structure) }, 'Expand All'));
+  btns.appendChild(el('button', { class: 'btn btn-ghost', id: 'expand-all-btn', onClick: () => expandAll(state.structure) }, 'Expand All'));
   actionsBar.appendChild(btns);
   explorer.appendChild(actionsBar);
 
@@ -1199,7 +1198,6 @@ function renderExplorer() {
   const treeContainer = el('div', { id: 'tree-container' });
   renderTreeInto(treeContainer, state.structure);
   explorer.appendChild(treeContainer);
-
   return explorer;
 }
 
@@ -1224,9 +1222,6 @@ function handleTreeSelection(node, event) {
   if (node.type === 'file' || node.type === 'repository') {
     state.selectedId = node.id;
     updateInspector();
-    const tc = document.getElementById('tree-container');
-    if (tc) renderTreeInto(tc, state.structure);
-    return;
   }
 
   toggleNode(node.id);
@@ -2235,7 +2230,7 @@ const lHeader = el('div', { class: 'pane-header' });
 lHeader.appendChild(el('span', { class: 'pane-title' }, 'Files'));
 const lClose = el('button', { class: 'btn btn-icon pane-close', html: Icons.x });
 lClose.onclick = () => leftPane.classList.add('closed');
-lHeader.appendChild(lClose);
+//lHeader.appendChild(lClose);
 leftPane.appendChild(lHeader);
 const treeContainer = el('div', { id: 'tree-container', class: 'graph-tree-scroll' });
 renderTreeInto(treeContainer, state.structure);
@@ -2319,7 +2314,7 @@ const rHeader = el('div', { class: 'pane-header' });
 rHeader.appendChild(el('span', { class: 'pane-title' }, 'Inspector'));
 const rClose = el('button', { class: 'btn btn-icon pane-close', html: Icons.x });
 rClose.onclick = () => rightPane.classList.add('closed');
-rHeader.appendChild(rClose);
+//rHeader.appendChild(rClose);
 rightPane.appendChild(rHeader);
 const rBody = el('div', { id: 'inspector-body', class: 'pane-body' });
 rightPane.appendChild(rBody);

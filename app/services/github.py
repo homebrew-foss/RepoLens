@@ -26,7 +26,7 @@ def _parse_github_url(url: str) -> tuple[str, str]:
     m = _GITHUB_RE.match(url)
     if not m:
         raise ValueError(f"Not a valid GitHub repository URL: {url!r}")
-    return m.group("owner"), m.group("repo"), m.group("branch")
+    return m.group("owner"), m.group("repo")
 
 
 def remove_readonly(func,path,exc):
