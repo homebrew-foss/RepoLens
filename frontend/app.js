@@ -803,7 +803,6 @@ function renderLocalTab() {
       openBtn.disabled = true;
       openBtn.textContent = 'Opening...';
       try {
-        console.log(folderPath)
         await api('/repo/local', { method: 'POST', body: { folder_path: folderPath } });
         const parts = folderPath.replace(/\\/g, '/').split('/').filter(Boolean);
         const name = parts.pop() || 'local-repo';
