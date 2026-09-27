@@ -160,6 +160,7 @@ async function api(path, opts = {}) {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
+      cache: 'no-store',   // ← force a fresh request every time
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
@@ -513,7 +514,7 @@ function renderSidebar(activeView) {
       const isActive = state.activeRepo && state.activeRepo.name === repo.name && state.activeRepo.owner === repo.owner;
       repoSection.appendChild(el('button', {
         class: `sidebar-item ${isActive ? 'active' : ''}`,
-        onClick: () => openRepo(repo),
+        onClick: async () => {console.log(repo.path);await api('/repo_path',{ method: 'POST', body: { folder_path: repo.path }});await openRepo(repo);console.log(state.structure); },
       },
         el('span', { class: 'sidebar-item-icon', html: Icons.repo }),
         el('span', { class: 'sidebar-item-label' }, repo.name),
@@ -629,7 +630,6 @@ function renderHome() {
   } else {
     const list = el('div', { class: 'repo-list' });
     for (const repo of state.repos) {
-      console.log(repo);
       list.appendChild(renderRepoCard(repo));
     }
     repoSection.appendChild(list);
@@ -651,7 +651,7 @@ function makeAction(icon, title, desc, onClick) {
 
 function renderRepoCard(repo) {
   const isActive = state.activeRepo && state.activeRepo.name === repo.name;
-  return el('div', { class: 'repo-card', onClick: () => openRepo(repo) },
+  return el('div', { class: 'repo-card', onClick: async () => {console.log(repo.path);await api('/repo_path',{ method: 'POST', body: { folder_path: repo.path }});await openRepo(repo);console.log(state.structure); }},
     el('div', { class: 'repo-card-left' },
       el('div', { class: 'repo-card-icon', html: Icons.repo }),
       el('div', { class: 'repo-card-info' },
@@ -1181,7 +1181,6 @@ function countSummaries(node) {
 // ─── Explorer ───────────────────────────────────────────────────
 function renderExplorer() {
   const explorer = el('div', { class: 'explorer content-centered' });
-
   if (!state.structure) {
     explorer.appendChild(renderEmptyState(Icons.folder, 'No summaries available', 'Parse a repository first to view its summaries.', 'Add Repository', () => openAddRepoModal()));
     return explorer;
@@ -1196,6 +1195,7 @@ function renderExplorer() {
   explorer.appendChild(actionsBar);
 
   // Tree
+  console.log(state.structure);
   const treeContainer = el('div', { id: 'tree-container' });
   renderTreeInto(treeContainer, state.structure);
   explorer.appendChild(treeContainer);
@@ -2132,10 +2132,12 @@ async function loadRepos() {
 }
 
 async function openRepo(repo) {
+
   state.activeRepo = { owner: repo.owner, name: repo.name, path: repo.path };
 
   try {
     state.structure = await api('/structure');
+    console.log(state.structure)
   } catch { state.structure = null; }
   try {
     state.nodes = await api('/nodes');
