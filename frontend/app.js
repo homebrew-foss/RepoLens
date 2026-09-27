@@ -629,6 +629,7 @@ function renderHome() {
   } else {
     const list = el('div', { class: 'repo-list' });
     for (const repo of state.repos) {
+      console.log(repo);
       list.appendChild(renderRepoCard(repo));
     }
     repoSection.appendChild(list);
