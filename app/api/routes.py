@@ -58,7 +58,7 @@ async def post_config(body: ConfigRequest) -> StatusResponse:
             cls_svc._client = None
         except Exception:
             pass
-
+        
         state.save()
         
     return StatusResponse(status="ok", detail="Configuration updated")
@@ -327,7 +327,8 @@ async def get_data_file(file_name: str):
     safe_name = Path(file_name).name
     if safe_name != file_name:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file name")
-    path = (state.repo_dir / safe_name).resolve()
+    path = (Path(state.repo_dir) / safe_name).resolve()
+    
     if not path.is_file():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{file_name} not found for the active repository")
     return FileResponse(path, media_type="application/json")
@@ -453,3 +454,9 @@ async def get_chat_endpoint(owner: str, repo: str, id: str):
 async def test_qdrant():
     c = vectorstore_svc._collection_name()
     return str(vectorstore_svc.get_client().get_collection(c))
+
+@router.post('/repo_path')
+async def set_repo_path(body: LocalRepoRequest):
+    state.repo_path = Path(body.folder_path)
+    logger.info("set_repo_path: repo_path=%s repo_dir=%s", state.repo_path, state.repo_dir)
+    return state
