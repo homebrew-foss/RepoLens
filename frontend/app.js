@@ -187,6 +187,9 @@ function toast(message, type = 'info') {
 
 // ─── Router ─────────────────────────────────────────────────────
 function navigate(view, skipHash = false) {
+  if(sessionStorage.getItem('nodeMeta')){
+  sessionStorage.removeItem('nodeMeta')
+  }
   state.view = view;
   if (!skipHash) window.location.hash = view;
   render();
@@ -1584,7 +1587,16 @@ async function sendChat(query) {
 
   const textarea = document.getElementById('chat-input');
   if (textarea) { textarea.value = ''; textarea.style.height = 'auto'; }
+  if((key = JSON.parse(sessionStorage.getItem('nodeMeta')))){
+    query = `
+Construct Name: ${key.name}
+Type: ${key.type}
+Summary: ${key.summary}
 
+[QUERY WITH CONTEXT]
+Given the target construct ${key.name} (${key.type}), which is summarized as: "${key.summary}", address the following question:
+${query}`
+  }
   state.chatMessages.push({ role: 'user', content: query });
   render();
 
@@ -2437,6 +2449,18 @@ function updateInspector() {
     },
         el('span', { html: Icons.braces }),
         el('span', {}, 'View details'),
+    ));
+    container.appendChild(
+      el('button', {
+        class: 'btn btn-secondary inspector-detail-btn',
+        onClick: () => {
+          console.log(target.id)
+          sessionStorage.setItem('nodeMeta',JSON.stringify({"name":title,"language":target.language,"summary":target.summary,"type":nodeType}))
+          window.location.href = "http://localhost:8000/#chat"
+      }
+    },
+        el('span', { html: Icons.chat }),
+        el('span', {}, 'Chat'),
     ));
     })
     .catch((err) => {
