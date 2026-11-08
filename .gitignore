@@ -219,3 +219,6 @@ __marimo__/
 /test-repo
 /out
 /models
+
+# Irrelevant folders
+mcp/

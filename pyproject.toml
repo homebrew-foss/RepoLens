@@ -18,6 +18,7 @@ dependencies = [
     "sentence-transformers>=5.6.1",
     "tqdm>=4.66",
     "torch>=2.13.0",
+    "mcp[cli]<2",
 ]
 
 [[tool.uv.index]]
