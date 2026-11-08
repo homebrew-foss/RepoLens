@@ -32,7 +32,7 @@ _client: QdrantClient | None = None
 _client_db: str | None = None
 
 
-def get_client() -> QdrantClient:
+def get_client(repo_path=None) -> QdrantClient:
     global _client, _client_db
     qdrant_url = os.getenv("QDRANT_URL")
     if qdrant_url:
@@ -41,7 +41,11 @@ def get_client() -> QdrantClient:
         return _client
     # embedded storage lives inside the active repo's repolens/ folder,
     # so each repository gets its own vector DB.
-    db_path = state.repo_dir / "qdrant_db"
+    if not repo_path:
+
+        db_path = state.repo_dir / "qdrant_db"
+    else:
+        db_path = repo_path/ "qdrant_db"
     db_str = str(db_path)
     if _client is None or _client_db != db_str:
         db_path.mkdir(parents=True, exist_ok=True)
@@ -254,12 +258,12 @@ def index_nodes() -> dict:
     }
 
 
-def search_nodes(query: str, top_k: int = 8) -> list[dict]:
+def search_nodes(query: str, top_k: int = 8,repo_path=None) -> list[dict]:
     query_vector = embed_query(query)
     if not query_vector:
         raise RuntimeError("Failed to embed query")
 
-    response = get_client().query_points(
+    response = get_client(repo_path).query_points(
         collection_name=_collection_name(),
         query=query_vector,
         limit=top_k,
