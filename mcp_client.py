@@ -1,14 +1,23 @@
 import asyncio
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
-
+from datetime import timedelta
+import httpx
 async def main():
-    async with streamable_http_client("http://127.0.0.1:8765/mcp") as (read, write, _):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-            tools = await session.list_tools()
-            print([t.name for t in tools.tools])
-            result = await session.call_tool("answer_query", {"path": "/home/akanish/agentic_ai_infra/dev_agent", "query":"explain the core logic behind this project","deepThink":False})
-            print(result.content[0].text)
+    http_client = httpx.AsyncClient(
+        timeout=httpx.Timeout(30,read=1500),
+        follow_redirects=True
+    )
+    async with http_client:
+
+        async with streamable_http_client("http://127.0.0.1:8765/mcp",http_client=http_client) as (read, write, _):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                tools = await session.list_tools()
+                print([t.name for t in tools.tools])
+                result = await session.call_tool("answer_query", {"path": "/home/akanish/agentic_ai_infra/dev_agent", "query":"explain the core logic behind this project","deepThink":False},read_timeout_seconds=timedelta(minutes=25))
+                #result = await session.call_tool("get_code",{"node_id":"abcc0f","path":"/home/akanish/agentic_ai_infra/dev_agent"})
+                #result = await session.call_tool("get_dependencies",{"node_id":"abcc0f","path":"/home/akanish/agentic_ai_infra/dev_agent"})
+                print(result.content[0].text)
 
 asyncio.run(main())
