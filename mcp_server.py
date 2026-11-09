@@ -8,6 +8,7 @@ from app.api.routes import _validate_local_folder
 from app.storage.state import state
 from app.services.treesitter import run_treesitter
 from app.services.nodes import generate_nodes
+from app.services.edges import generate_edges
 from app.services.summaries import run_summary_pipeline
 from app.services.vectorstore import index_nodes
 from app.services.content import get_node_code
@@ -37,6 +38,7 @@ def answer_query(path:str,query:str,deepThink:bool):
         state.register_repo("local", "local", folder.name, folder)
         _ = run_treesitter()
         _ = generate_nodes()
+        _ = generate_edges()
         _ = run_summary_pipeline()
         _ = index_nodes()
 
@@ -53,9 +55,22 @@ def get_code(path:str,node_id:str):
     """
     if not os.path.exists(path):
         return {"info":"Project doesn't exist..."}
-    if not os.path.exists(os.path.join("path","repolens")):
+    if not os.path.exists(os.path.join(path,"repolens")):
         return {"info":"RepoLensification of project incomplete"}
-    code = get_node_code(node_id,Path(path))
-    return {"code":code['code']}
+    code = get_node_code(node_id,Path(path))['code']
+    return {"code":code}
+
+@mcp.tool()
+def get_dependencies(path:str,node_id:str):
+    """
+    Get the dependencies that particular node/file depends on
+    ARGS: path, node_id
+    """
+    if not os.path.exists(path):
+        return {"info":"Project doesn't exist..."}
+    if not os.path.exists(os.path.join(path,"repolens")):
+        return {"info":"RepoLensification of project incomplete"}
+    dependencies = get_node_code(node_id,Path(path))['imports']
+    return {"dependencies":dependencies}
 if __name__ == "__main__":
     mcp.run(transport='streamable-http')
