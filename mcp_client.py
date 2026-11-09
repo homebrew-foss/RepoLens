@@ -9,6 +9,6 @@ async def main():
             tools = await session.list_tools()
             print([t.name for t in tools.tools])
             result = await session.call_tool("answer_query", {"path": "/home/akanish/agentic_ai_infra/dev_agent", "query":"explain the core logic behind this project","deepThink":False})
-            print(result.content)
+            print(result.content[0].text)
 
 asyncio.run(main())
