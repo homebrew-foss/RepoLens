@@ -100,9 +100,9 @@ def _parse_rag_response(text: str) -> tuple[str, list[str]]:
     return answer_text, citation_ids
 
 
-def answer_query(query: str, top_k: int | None = None, deep: bool = False) -> dict:
+def answer_query(query: str, top_k: int | None = None, deep: bool = False,repo_path=None) -> dict:
     top_k = top_k or SUMMARY_NODE_COUNT
-    retrieved = vectorstore.search_nodes(query, top_k=top_k)
+    retrieved = vectorstore.search_nodes(query, top_k=top_k,repo_path=repo_path)
 
     if deep:
         code_nodes = _build_deep_code_context(retrieved, CODE_NODE_COUNT)

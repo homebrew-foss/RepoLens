@@ -17,8 +17,13 @@ def _read_snippet(path: str, start_line: int, end_line: int) -> str:
         return ""
 
 
-def _find_node(node_id: str) -> dict | None:
-    nodes_path = (state.repo_dir / "nodes.json").resolve()
+def _find_node(node_id: str,repo_path=None) -> dict | None:
+    if not repo_path:
+
+        nodes_path = (state.repo_dir / "nodes.json").resolve()
+    else:
+
+        nodes_path = (repo_path / 'repolens' / "nodes.json").resolve()
     if not nodes_path.exists():
         return None
     data = json.loads(nodes_path.read_text(encoding="utf-8"))
@@ -28,8 +33,12 @@ def _find_node(node_id: str) -> dict | None:
     return None
 
 
-def _find_file_entry(node_id: str) -> dict | None:
-    structure_path = (state.repo_dir / "filestructure.json").resolve()
+def _find_file_entry(node_id: str,repo_path=None) -> dict | None:
+    if repo_path:
+        structure_path = (repo_path / "repolens" / "filestructure.json").resolve()    
+    else:
+
+        structure_path = (state.repo_dir / "filestructure.json").resolve()
     if not structure_path.exists():
         return None
     structure = json.loads(structure_path.read_text(encoding="utf-8"))
@@ -165,8 +174,8 @@ def _collect_imports(node: dict) -> list[dict]:
     return imports
 
 
-def get_node_code(node_id: str) -> dict:
-    node = _find_node(node_id)
+def get_node_code(node_id: str,repo_path=None) -> dict:
+    node = _find_node(node_id,repo_path=repo_path)
 
     if node is None:
         file_entry = _find_file_entry(node_id)
@@ -225,8 +234,8 @@ def get_node_code(node_id: str) -> dict:
     }
 
 
-def get_node_content(node_id: str) -> dict | None:
-    node = _find_node(node_id)
+def get_node_content(node_id: str,repo_path=None) -> dict | None:
+    node = _find_node(node_id,repo_path=repo_path)
     if node is not None:
         return {
             "id": node_id,
@@ -240,7 +249,7 @@ def get_node_content(node_id: str) -> dict | None:
             "content": _read_snippet(node["path"], node["start_line"], node["end_line"]),
         }
 
-    file_entry = _find_file_entry(node_id)
+    file_entry = _find_file_entry(node_id,repo_path=repo_path)
     if file_entry is not None:
         path = file_entry.get("path", "")
         content = _read_snippet(path, 1, 10**9)

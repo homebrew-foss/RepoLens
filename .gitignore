@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 # C extensions
 *.so
-
+.venv/
 # Distribution / packaging
 _models/
 .Python
@@ -219,3 +219,6 @@ __marimo__/
 /test-repo
 /out
 /models
+
+# Irrelevant folders
+mcp/
