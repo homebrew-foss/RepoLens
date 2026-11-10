@@ -70,7 +70,7 @@ This retrieval-grounded design is what separates `RepoLens` from just pointing a
 Beyond the web interface, `RepoLens` exposes its repository intelligence through an MCP (Model Context Protocol) server, so agents and tools that speak MCP can query repository structure, summaries, and relevant code context directly instead of going through the UI.
 
 - `mcp_server.py`: the MCP server (`RepoLens-MCP`). Launch it with `python mcp_server.py`
-- `mcp_client.py`: a client for connecting to and interacting with the server
+- `mcp_client.py`: a sample client for connecting to and interacting with the server(Also contains instructions for usage of tools of mcp server)
 
 #### Tools
 
